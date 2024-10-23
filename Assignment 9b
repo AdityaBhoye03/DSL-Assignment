@@ -1,0 +1,152 @@
+\\Title :- Implement a checkout system for a supermarket to efficiently manage customer queues during
+peak hours. The system should support the following operations using a circular queue data
+structure
+a. Customer arrival
+b. Customer checkout
+c. Close Checkout Counter
+d. View customer
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\ Code
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+struct Customer {
+    string name;
+    int id;
+};
+
+
+class CircularQueue {
+private:
+    Customer* queue;
+    int front;
+    int rear;
+    int maxSize;
+
+public:
+    CircularQueue(int size) : maxSize(size), front(-1), rear(-1) {
+        queue = new Customer[maxSize];
+    }
+
+    ~CircularQueue() {
+        delete[] queue;
+    }
+
+    
+    bool isFull() {
+        return (rear + 1) % maxSize == front;
+    }
+
+    
+    bool isEmpty() {
+        return front == -1;
+    }
+
+    
+    void customerArrival(const string& name, int id) {
+        if (isFull()) {
+            cout << "Queue is full! Customer " << name << " cannot join the queue." << endl;
+            return;
+        }
+        if (isEmpty()) {
+            front = rear = 0;
+        } else {
+            rear = (rear + 1) % maxSize;
+        }
+        queue[rear] = {name, id};
+        cout << "Customer " << name << " (ID: " << id << ") has arrived." << endl;
+    }
+
+    
+    void customerCheckout() {
+        if (isEmpty()) {
+            cout << "No customers in the queue." << endl;
+            return;
+        }
+        Customer checkedOutCustomer = queue[front];
+        if (front == rear) {
+            front = rear = -1;
+        } else {
+            front = (front + 1) % maxSize;
+        }
+        cout << "Customer " << checkedOutCustomer.name << " (ID: " << checkedOutCustomer.id << ") has checked out." << endl;
+    }
+
+    
+    void closeCheckoutCounter() {
+        front = rear = -1;
+        cout << "Checkout counter closed." << endl;
+    }
+
+    void viewCustomers() const {
+        if (isEmpty()) {
+            cout << "No customers in the queue." << endl;
+            return;
+        }
+        cout << "Customers in the queue:" << endl;
+        int i = front;
+        while (true) {
+            cout << "Customer: " << queue[i].name << " (ID: " << queue[i].id << ")" << endl;
+            if (i == rear) break;
+            i = (i + 1) % maxSize;
+        }
+    }
+};
+
+
+int main() {
+    int maxQueueSize = 5;
+    CircularQueue checkoutQueue(maxQueueSize);
+
+    int choice, id;
+    string name;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Customer Arrival\n";
+        cout << "2. Customer Checkout\n";
+        cout << "3. Close Checkout Counter\n";
+        cout << "4. View Customers in Queue\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter customer name: ";
+                getline(cin, name);
+                cout << "Enter customer ID: ";
+                cin >> id;
+                checkoutQueue.customerArrival(name, id);
+                break;
+
+            case 2:
+                checkoutQueue.customerCheckout();
+                break;
+
+            case 3:
+                checkoutQueue.closeCheckoutCounter();
+                break;
+
+            case 4:
+                checkoutQueue.viewCustomers();
+                break;
+
+            case 5:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
