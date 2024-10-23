@@ -1,0 +1,109 @@
+\\Title :- Implement a browser history management system using a stack data structure to track the user's
+browsing history. The system should support the following functionalities:
+a.Add visited page
+b.Navigate back
+c.View current page
+d.Check if history is empty or not
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\code
+
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+class BrowserHistory {
+private:
+    stack<string> history;
+    string currentPage;
+
+public:
+    
+    BrowserHistory() : currentPage("") {}
+
+    
+    void visitPage(const string& page) {
+        if (!currentPage.empty()) {
+            history.push(currentPage);
+        }
+        currentPage = page;
+        cout << "Visited: " << currentPage << endl;
+    }
+
+    void navigateBack() {
+        if (history.empty()) {
+            cout << "No pages in history to go back to." << endl;
+        } else {
+            currentPage = history.top();
+            history.pop();
+            cout << "Navigated back to: " << currentPage << endl;
+        }
+    }
+
+    void viewCurrentPage() const {
+        if (currentPage.empty()) {
+            cout << "No current page." << endl;
+        } else {
+            cout << "Current page: " << currentPage << endl;
+        }
+    }
+
+
+    bool isHistoryEmpty() const {
+        return history.empty();
+    }
+};
+
+int main() {
+    BrowserHistory browser;
+    int choice;
+    string page;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Visit Page\n";
+        cout << "2. Navigate Back\n";
+        cout << "3. View Current Page\n";
+        cout << "4. Check if History is Empty\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter page URL to visit: ";
+                getline(cin, page);
+                browser.visitPage(page);
+                break;
+
+            case 2:
+                browser.navigateBack();
+                break;
+
+            case 3:
+                browser.viewCurrentPage();
+                break;
+
+            case 4:
+                if (browser.isHistoryEmpty()) {
+                    cout << "History is empty." << endl;
+                } else {
+                    cout << "History is not empty." << endl;
+                }
+                break;
+
+            case 5:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
