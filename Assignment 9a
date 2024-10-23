@@ -1,0 +1,106 @@
+\\Title :- Implement a restaurant waitlist system using the queue data structure. Restaurant waitlist
+provide following facility:
+a.Add Party to Waitlist
+b.Seat Party
+c.Display Waitlist
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\code
+
+#include <iostream>
+#include <string>
+#include <queue>
+
+using namespace std;
+
+
+struct Party {
+    string name;
+    int size;
+
+    Party(const string& n, int s) : name(n), size(s) {}
+};
+
+class Waitlist {
+private:
+    queue<Party> waitlist;
+
+public:
+  
+    void addParty(const string& name, int size) {
+        waitlist.push(Party(name, size));
+        cout << "Added party: " << name << " (Size: " << size << ") to the waitlist." << endl;
+    }
+
+    
+    void seatParty() {
+        if (waitlist.empty()) {
+            cout << "No parties in the waitlist to seat." << endl;
+        } else {
+            Party seatedParty = waitlist.front();
+            waitlist.pop(); 
+            cout << "Seated party: " << seatedParty.name << " (Size: " << seatedParty.size << ")." << endl;
+        }
+    }
+
+    void displayWaitlist() const {
+        if (waitlist.empty()) {
+            cout << "The waitlist is currently empty." << endl;
+            return;
+        }
+        cout << "Current Waitlist:" << endl;
+        queue<Party> tempQueue = waitlist; 
+        while (!tempQueue.empty()) {
+            Party p = tempQueue.front();
+            cout << "Party: " << p.name << " (Size: " << p.size << ")" << endl;
+            tempQueue.pop();
+        }
+    }
+};
+
+
+int main() {
+    Waitlist restaurantWaitlist;
+    int choice;
+    string name;
+    int size;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add Party to Waitlist\n";
+        cout << "2. Seat Party\n";
+        cout << "3. Display Waitlist\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter party name: ";
+                getline(cin, name);
+                cout << "Enter party size: ";
+                cin >> size;
+                restaurantWaitlist.addParty(name, size);
+                break;
+
+            case 2:
+                restaurantWaitlist.seatParty();
+                break;
+
+            case 3:
+                restaurantWaitlist.displayWaitlist();
+                break;
+
+            case 4:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
