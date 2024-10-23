@@ -1,0 +1,144 @@
+\\Title :- Write a program to convert infix expression to postfix, infix expression to prefix and evaluation
+of postfix and prefix expression.
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\code
+
+#include <iostream>
+#include <stack>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
+using namespace std;
+
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+string infixToPostfix(const string& infix) {
+    stack<char> s;
+    string postfix;
+    
+    for (char c : infix) {
+        if (isalnum(c)) {
+            postfix += c;
+        } else if (c == '(') {
+            s.push(c);
+        } else if (c == ')') {
+            while (!s.empty() && s.top() != '(') {
+                postfix += s.top();
+                s.pop();
+            }
+            s.pop();
+        } else if (isOperator(c)) {
+            while (!s.empty() && precedence(s.top()) >= precedence(c)) {
+                postfix += s.top();
+                s.pop();
+            }
+            s.push(c);
+        }
+    }
+
+    while (!s.empty()) {
+        postfix += s.top();
+        s.pop();
+    }
+    
+    return postfix;
+}
+
+string infixToPrefix(const string& infix) {
+    string reversedInfix = string(infix.rbegin(), infix.rend());
+    for (char& c : reversedInfix) {
+        if (c == '(') {
+            c = ')';
+        } else if (c == ')') {
+            c = '(';
+        }
+    }
+
+    string postfix = infixToPostfix(reversedInfix);
+    string prefix = string(postfix.rbegin(), postfix.rend());
+    return prefix;
+}
+
+int evaluatePostfix(const string& postfix) {
+    stack<int> s;
+    
+    for (char c : postfix) {
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else {
+            int operand2 = s.top(); s.pop();
+            int operand1 = s.top(); s.pop();
+            switch (c) {
+                case '+': s.push(operand1 + operand2); break;
+                case '-': s.push(operand1 - operand2); break;
+                case '*': s.push(operand1 * operand2); break;
+                case '/': s.push(operand1 / operand2); break;
+            }
+        }
+    }
+    return s.top();
+}
+
+
+int evaluatePrefix(const string& prefix) {
+    stack<int> s;
+    
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        char c = prefix[i];
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else {
+            int operand1 = s.top(); s.pop();
+            int operand2 = s.top(); s.pop();
+            switch (c) {
+                case '+': s.push(operand1 + operand2); break;
+                case '-': s.push(operand1 - operand2); break;
+                case '*': s.push(operand1 * operand2); break;
+                case '/': s.push(operand1 / operand2); break;
+            }
+        }
+    }
+    return s.top();
+}
+
+int main() {
+    string infix;
+
+    cout << "Enter an infix expression: ";
+    getline(cin, infix);
+
+
+    string postfix = infixToPostfix(infix);
+    cout << "Postfix expression: " << postfix << endl;
+
+
+    string prefix = infixToPrefix(infix);
+    cout << "Prefix expression: " << prefix << endl;
+
+
+    cout << "Enter a postfix expression to evaluate: ";
+    string postfixExpr;
+    getline(cin, postfixExpr);
+    int postfixResult = evaluatePostfix(postfixExpr);
+    cout << "Postfix evaluation result: " << postfixResult << endl;
+
+
+    cout << "Enter a prefix expression to evaluate: ";
+    string prefixExpr;
+    getline(cin, prefixExpr);
+    int prefixResult = evaluatePrefix(prefixExpr);
+    cout << "Prefix evaluation result: " << prefixResult << endl;
+
+    return 0;
+}
