@@ -1,0 +1,88 @@
+\\Title :- Consider a student database of SY COMP class (at least 15 records). Database contains different
+fields of every student like Roll No, Name and SGPA.
+a. Arrange list of employees according to EMP-ID in ascending order using Quick Sort
+using Insertion Sort
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\ Code
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <vector>
+
+using namespace std;
+
+
+struct Employee {
+    int empID;
+    string empName;
+    float empSalary;
+};
+
+
+int partition(vector<Employee>& employees, int low, int high) {
+    int pivot = employees[high].empID;
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (employees[j].empID < pivot) {
+            i++;
+            swap(employees[i], employees[j]);
+        }
+    }
+    swap(employees[i + 1], employees[high]);
+    return i + 1;
+}
+
+void quickSort(vector<Employee>& employees, int low, int high) {
+    if (low < high) {
+        int pi = partition(employees, low, high);
+        quickSort(employees, low, pi - 1);
+        quickSort(employees, pi + 1, high);
+    }
+}
+
+void printEmployeeList(const vector<Employee>& employees) {
+    cout << left << setw(10) << "EMP-ID" << setw(25) << "EMP-NAME" << setw(10) << "EMP-SALARY" << endl;
+    cout << string(55, '-') << endl;
+    for (const auto& employee : employees) {
+        cout << setw(10) << employee.empID
+            << setw(25) << employee.empName
+            << setw(10) << employee.empSalary << endl;
+    }
+}
+
+int main() {
+    vector<Employee> employees = {
+        {101, "Alice Johnson", 60000},
+        {102, "Bob Smith", 55000},
+        {103, "Charlie Brown", 70000},
+        {104, "David Wilson", 48000},
+        {105, "Eva Adams", 52000},
+        {106, "Frank Harris", 58000},
+        {107, "Grace Lee", 62000},
+        {108, "Henry White", 75000},
+        {109, "Ivy Martinez", 49000},
+        {110, "Jack Robinson", 56000},
+        {111, "Kevin Thompson", 64000},
+        {112, "Lily King", 80000},
+        {113, "Mark Lewis", 59000},
+        {114, "Nancy Clark", 53000},
+        {115, "Oscar Hall", 51000},
+        {116, "Peter Parker", 72000},
+        {117, "Quinn McKenzie", 68000},
+        {118, "Rachel Green", 55000},
+        {119, "Steve Rogers", 90000},
+        {120, "Tom Hardy", 61000},
+        {121, "Uma Thurman", 70000}
+    };
+
+    quickSort(employees, 0, employees.size() - 1);
+
+    cout << "Employee List (Sorted by EMP-ID):\n";
+    printEmployeeList(employees);
+
+    return 0;
+}
