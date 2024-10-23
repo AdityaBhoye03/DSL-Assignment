@@ -1,0 +1,182 @@
+\\Title :- Implement a simple text editor application using a doubly linked list to manage the text buffer.
+Text editor should support the following functionalities:
+a. Insert text
+b. Delete text
+c. Display text
+d. Search text
+e. Print text in reverse
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\Code
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+struct Node {
+    char data;
+    Node* prev;
+    Node* next;
+
+    Node(char ch) : data(ch), prev(nullptr), next(nullptr) {}
+};
+
+
+class TextEditor {
+private:
+    Node* head;
+    Node* tail;
+
+public:
+    TextEditor() : head(nullptr), tail(nullptr) {}
+
+
+    void insertText(const string& text) {
+        for (char ch : text) {
+            Node* newNode = new Node(ch);
+            if (!head) {
+                head = tail = newNode;
+            } else {
+                tail->next = newNode;
+                newNode->prev = tail;
+                tail = newNode;
+            }
+        }
+        cout << "Text inserted: " << text << endl;
+    }
+
+
+    void deleteText(int count) {
+        while (count > 0 && tail) {
+            Node* toDelete = tail;
+            tail = tail->prev;
+            if (tail) {
+                tail->next = nullptr;
+            } else {
+                head = nullptr;
+            }
+            delete toDelete;
+            count--;
+        }
+        cout << "Deleted " << (count > 0 ? "more characters than present." : "characters.") << endl;
+    }
+
+
+    void displayText() {
+        if (!head) {
+            cout << "Text buffer is empty." << endl;
+            return;
+        }
+        Node* temp = head;
+        cout << "Current Text: ";
+        while (temp) {
+            cout << temp->data;
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    void searchText(const string& text) {
+        if (!head) {
+            cout << "Text buffer is empty." << endl;
+            return;
+        }
+        Node* temp = head;
+        string currentText;
+        while (temp) {
+            currentText += temp->data;
+            temp = temp->next;
+        }
+
+        size_t found = currentText.find(text);
+        if (found != string::npos) {
+            cout << "Text found at position: " << found << endl;
+        } else {
+            cout << "Text not found." << endl;
+        }
+    }
+
+    void printReverse() {
+        if (!tail) {
+            cout << "Text buffer is empty." << endl;
+            return;
+        }
+        Node* temp = tail;
+        cout << "Text in Reverse: ";
+        while (temp) {
+            cout << temp->data;
+            temp = temp->prev;
+        }
+        cout << endl;
+    }
+
+
+    ~TextEditor() {
+        while (head) {
+            Node* toDelete = head;
+            head = head->next;
+            delete toDelete;
+        }
+    }
+};
+
+
+int main() {
+    TextEditor editor;
+    int choice;
+    string text;
+    int count;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Insert Text\n";
+        cout << "2. Delete Text\n";
+        cout << "3. Display Text\n";
+        cout << "4. Search Text\n";
+        cout << "5. Print Text in Reverse\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter text to insert: ";
+                getline(cin, text);
+                editor.insertText(text);
+                break;
+
+            case 2:
+                cout << "Enter number of characters to delete: ";
+                cin >> count;
+                editor.deleteText(count);
+                break;
+
+            case 3:
+                editor.displayText();
+                break;
+
+            case 4:
+                cout << "Enter text to search: ";
+                getline(cin, text);
+                editor.searchText(text);
+                break;
+
+            case 5:
+                editor.printReverse();
+                break;
+
+            case 6:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
+
+    return 0;
+}
+
