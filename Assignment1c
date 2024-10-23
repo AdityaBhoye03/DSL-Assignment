@@ -1,0 +1,112 @@
+\\Title :- Consider a student database of SY COMP class (at least 15 records). Database contains different
+fields of every student like Roll No, Name and SGPA.
+c. Arrange list of students to find out first ten toppers from a class using Radix sort
+using Insertion Sort
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\ Code
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+
+struct Student {
+    int rollNo;
+    string name;
+    float sgpa;
+};
+
+
+float getMaxSGPA(const vector<Student>& students) {
+    float maxSGPA = students[0].sgpa;
+    for (const auto& student : students) {
+        if (student.sgpa > maxSGPA) {
+            maxSGPA = student.sgpa;
+        }
+    }
+    return maxSGPA;
+}
+
+
+void countingSort(vector<Student>& students, int exp) {
+    vector<Student> output(students.size());
+    int count[10] = {0};
+
+
+    for (const auto& student : students) {
+        int index = static_cast<int>(student.sgpa * 10) / exp;
+        count[index % 10]++;
+    }
+
+    
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+
+    for (int i = students.size() - 1; i >= 0; i--) {
+        int index = static_cast<int>(students[i].sgpa * 10) / exp;
+        output[count[index % 10] - 1] = students[i];
+        count[index % 10]--;
+    }
+
+    
+    for (int i = 0; i < students.size(); i++) {
+        students[i] = output[i];
+    }
+}
+
+
+void radixSort(vector<Student>& students) {
+    float maxSGPA = getMaxSGPA(students);
+
+
+    for (int exp = 1; static_cast<int>(maxSGPA * 10) / exp > 0; exp *= 10) {
+        countingSort(students, exp);
+    }
+}
+
+
+void printRollCallList(const vector<Student>& students) {
+    cout << left << setw(10) << "Roll No" << setw(25) << "Name" << setw(10) << "SGPA" << endl;
+    cout << string(45, '-') << endl;
+    for (const auto& student : students) {
+        cout << setw(10) << student.rollNo
+            << setw(25) << student.name
+            << setw(10) << student.sgpa << endl;
+    }
+}
+
+int main() {
+    vector<Student> students = {
+        {101, "Alice Johnson", 8.5},
+        {102, "Bob Smith", 7.2},
+        {103, "Charlie Brown", 9.0},
+        {104, "David Wilson", 6.8},
+        {105, "Eva Adams", 8.1},
+        {106, "Frank Harris", 7.5},
+        {107, "Grace Lee", 8.8},
+        {108, "Henry White", 9.2},
+        {109, "Ivy Martinez", 7.9},
+        {110, "Jack Robinson", 8.3},
+        {111, "Kevin Thompson", 7.6},
+        {112, "Lily King", 9.5},
+        {113, "Mark Lewis", 8.0},
+        {114, "Nancy Clark", 7.4},
+        {115, "Oscar Hall", 8.9}
+    };
+
+    
+    radixSort(students);
+
+
+    cout << "Top Ten Toppers:\n";
+    printRollCallList(vector<Student>(students.end() - 10, students.end()));
+
+    return 0;
+}
