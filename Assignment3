@@ -1,0 +1,176 @@
+\Title :- Consider the playlist in a music player. Implement a playlist feature in music player application
+using singly linked list. Each song in the playlist is represented as a node in the linked list. Each
+node contains information about the song (such as title or artist or duration, etc.).
+The playlist should allow users to:
+a. Add songs
+b. Remove songs
+c. Display the entire playlist
+d. Play specific songs
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\ Code
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+struct Song {
+    string title;
+    string artist;
+    int duration;
+    Song* next;
+
+
+    Song(string t, string a, int d) : title(t), artist(a), duration(d), next(nullptr) {}
+};
+
+
+class Playlist {
+private:
+    Song* head;
+
+public:
+    Playlist() : head(nullptr) {}
+
+    void addSong(string title, string artist, int duration) {
+        Song* newSong = new Song(title, artist, duration);
+        if (!head) {
+            head = newSong;
+        } else {
+            Song* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newSong;
+        }
+        cout << "Song added: " << title << " by " << artist << endl;
+    }
+
+    void removeSong(string title) {
+        if (!head) {
+            cout << "Playlist is empty." << endl;
+            return;
+        }
+
+        if (head->title == title) {
+            Song* toDelete = head;
+            head = head->next;
+            delete toDelete;
+            cout << "Song removed: " << title << endl;
+            return;
+        }
+
+        Song* temp = head;
+        while (temp->next && temp->next->title != title) {
+            temp = temp->next;
+        }
+
+        if (temp->next) {
+            Song* toDelete = temp->next;
+            temp->next = temp->next->next;
+            delete toDelete;
+            cout << "Song removed: " << title << endl;
+        } else {
+            cout << "Song not found: " << title << endl;
+        }
+    }
+
+
+    void displayPlaylist() {
+        if (!head) {
+            cout << "Playlist is empty." << endl;
+            return;
+        }
+        Song* temp = head;
+        cout << "Current Playlist:" << endl;
+        while (temp) {
+            cout << "Title: " << temp->title
+                << ", Artist: " << temp->artist
+                << ", Duration: " << temp->duration << "s" << endl;
+            temp = temp->next;
+        }
+    }
+
+    void playSong(string title) {
+        Song* temp = head;
+        while (temp) {
+            if (temp->title == title) {
+                cout << "Now playing: " << temp->title
+                    << " by " << temp->artist
+                    << " [Duration: " << temp->duration << " seconds]" << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Song not found: " << title << endl;
+    }
+
+
+    ~Playlist() {
+        while (head) {
+            Song* toDelete = head;
+            head = head->next;
+            delete toDelete;
+        }
+    }
+};
+
+int main() {
+    Playlist playlist;
+    int choice;
+    string title, artist;
+    int duration;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add Song\n";
+        cout << "2. Remove Song\n";
+        cout << "3. Display Playlist\n";
+        cout << "4. Play Song\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cin.ignore();
+                cout << "Enter song title: ";
+                getline(cin, title);
+                cout << "Enter artist name: ";
+                getline(cin, artist);
+                cout << "Enter duration (in seconds): ";
+                cin >> duration;
+                playlist.addSong(title, artist, duration);
+                break;
+
+            case 2:
+                cin.ignore();
+                cout << "Enter song title to remove: ";
+                getline(cin, title);
+                playlist.removeSong(title);
+                break;
+
+            case 3:
+                playlist.displayPlaylist();
+                break;
+
+            case 4:
+                cin.ignore();
+                cout << "Enter song title to play: ";
+                getline(cin, title);
+                playlist.playSong(title);
+                break;
+
+            case 5:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
