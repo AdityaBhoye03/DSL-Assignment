@@ -1,0 +1,161 @@
+\\Title :- Implement a navigation system for a delivery service using a circular linked list to represent
+routes. The navigation system should support the following functionalities:
+a. Add route
+b. Remove route
+c. Display route
+\\Name :- Aditya Bhoye
+\\PRN  :- 124B2B016
+\\Class & Div :- SYCO(B)
+\\ Code
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+struct Node {
+    string route;
+    Node* next;
+
+    Node(const string& r) : route(r), next(nullptr) {}
+};
+
+
+class CircularLinkedList {
+private:
+    Node* head;
+
+public:
+    CircularLinkedList() : head(nullptr) {}
+
+    
+    void addRoute(const string& route) {
+        Node* newNode = new Node(route);
+        if (!head) {
+            head = newNode;
+            newNode->next = head;
+        } else {
+            Node* temp = head;
+            while (temp->next != head) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->next = head;
+        }
+        cout << "Route added: " << route << endl;
+    }
+
+    
+    void removeRoute(const string& route) {
+        if (!head) {
+            cout << "No routes to remove." << endl;
+            return;
+        }
+
+        Node* current = head;
+        Node* previous = nullptr;
+
+        do {
+            if (current->route == route) {
+                if (previous) {
+                    previous->next = current->next;
+                } else {
+                    
+                    Node* temp = head;
+                    while (temp->next != head) {
+                        temp = temp->next;
+                    }
+                    if (temp == head) {
+                        delete head;
+                        head = nullptr;
+                    } else {
+                        temp->next = current->next;
+                        head = current->next;
+                        delete current;
+                    }
+                }
+                cout << "Route removed: " << route << endl;
+                return;
+            }
+            previous = current;
+            current = current->next;
+        } while (current != head);
+
+        cout << "Route not found: " << route << endl;
+    }
+
+
+    void displayRoutes() {
+        if (!head) {
+            cout << "No routes available." << endl;
+            return;
+        }
+
+        Node* temp = head;
+        cout << "Routes: ";
+        do {
+            cout << temp->route << " ";
+            temp = temp->next;
+        } while (temp != head);
+        cout << endl;
+    }
+
+
+    ~CircularLinkedList() {
+        if (!head) return;
+
+        Node* current = head;
+        Node* nextNode;
+
+        do {
+            nextNode = current->next;
+            delete current;
+            current = nextNode;
+        } while (current != head);
+    }
+};
+
+
+int main() {
+    CircularLinkedList routes;
+    int choice;
+    string route;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add Route\n";
+        cout << "2. Remove Route\n";
+        cout << "3. Display Routes\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter route to add: ";
+                getline(cin, route);
+                routes.addRoute(route);
+                break;
+
+            case 2:
+                cout << "Enter route to remove: ";
+                getline(cin, route);
+                routes.removeRoute(route);
+                break;
+
+            case 3:
+                routes.displayRoutes();
+                break;
+
+            case 4:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
